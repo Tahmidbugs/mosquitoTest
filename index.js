@@ -17,7 +17,7 @@ dotenv.config();
     return result;
   }
   const name = random_name_generator();
-  const email = `${name}@examaple.com`;
+  const email = `${name}@examaple.co`;
   const emaillog = "habibi@gmail.com";
   const passwordlog = "1234567";
   const username = `${name}`;
