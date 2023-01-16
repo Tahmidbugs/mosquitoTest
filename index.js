@@ -24,7 +24,10 @@ dotenv.config();
   const password = "12345678";
   const fileToUpload = "./mos.jpg";
 
-  let browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({
+    channel: "stable",
+    headless: false,
+  });
   let page = await browser.newPage();
   const start = new Date();
   console.time("Login+Upload+classifyTime");
