@@ -1,0 +1,25 @@
+{
+  "name": "mosquitotest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tahmidbugs/mosquitoTest.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tahmidbugs/mosquitoTest/issues"
+  },
+  "homepage": "https://github.com/Tahmidbugs/mosquitoTest#readme",
+  "dependencies": {
+    "cron": "^2.2.0",
+    "dotenv": "^16.0.3",
+    "nodemailer": "^6.9.0",
+    "puppeteer": "^19.5.2"
+  }
+}
