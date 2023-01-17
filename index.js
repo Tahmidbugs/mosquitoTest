@@ -5,7 +5,7 @@ dotenv.config();
 
 // cron.schedule("*/1 * * * *", () => {
 (async () => {
-  const puppeteer = require("puppeteer-core");
+  const puppeteer = require("puppeteer");
   const nodemailer = require("nodemailer");
   function random_name_generator() {
     let characters =
