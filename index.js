@@ -25,7 +25,7 @@ dotenv.config();
   const fileToUpload = "./mos.jpg";
 
   const browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    executablePath: "google-chrome-stable",
     headless: false,
   });
   let page = await browser.newPage();
