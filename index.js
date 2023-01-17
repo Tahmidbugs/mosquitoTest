@@ -25,7 +25,6 @@ dotenv.config();
   const fileToUpload = "./mos.jpg";
 
   const browser = await puppeteer.launch({
-    channel: "stable",
     headless: false,
   });
   let page = await browser.newPage();
