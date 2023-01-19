@@ -7,6 +7,20 @@ dotenv.config();
 (async () => {
   const puppeteer = require("puppeteer");
   const nodemailer = require("nodemailer");
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      type: "OAuth2",
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
+      clientId: process.env.CLIENTID,
+      clientSecret: process.env.CLIENTSECRET,
+      refreshToken: process.env.REFRESHTOKEN,
+    },
+  });
+
+  let recipients = ["tahmidahmad001@gmail.com", "tahmidahmed1@usf.edu"]; //sriramc@usf.edu, otabek1@usf.edu
+
   function random_name_generator() {
     let characters =
       "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -25,7 +39,6 @@ dotenv.config();
   const fileToUpload = "./mos.jpg";
 
   const browser = await puppeteer.launch({
-    executablePath: "google-chrome-stable",
     headless: false,
   });
   let page = await browser.newPage();
@@ -48,6 +61,7 @@ dotenv.config();
   await page.click('a[href="/uploadimages"]');
   await page.waitForSelector(".btn-outline-info");
 
+  await page.waitForSelector('input[type="file"]');
   const fileInput = await page.$('input[type="file"]');
   await fileInput.uploadFile(fileToUpload);
 
@@ -60,43 +74,52 @@ dotenv.config();
     await page.waitForSelector(".btn-outline-warning");
     await page.click("button.btn-outline-info.mr-2:nth-of-type(2)");
   }, 5000);
-  await page.waitForFunction(
-    () => {
-      const img = document.querySelector('img[src*="predicted_images"]');
-      return img && img.naturalWidth > 0 && img.naturalHeight > 0;
-    },
-    {
-      timeout: 60000,
-    }
-  );
-  console.timeEnd("Login+Upload+classifyTime");
-  const end = new Date();
-  const time = end - start;
-  let transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      type: "OAuth2",
-      user: process.env.EMAIL,
-      pass: process.env.PASSWORD,
-      clientId: process.env.CLIENTID,
-      clientSecret: process.env.CLIENTSECRET,
-      refreshToken: process.env.REFRESHTOKEN,
-    },
-  });
 
-  let recipients = ["tahmidahmad001@gmail.com"];
-  let mailOptions = {
-    from: "ahmadtahmid01@gmail.com",
-    to: recipients.join(","),
-    subject: "Test email",
-    text: `Testing the mosquito website. It took ${time} ms to login, upload image, classify the mosquito image`,
-  };
+  try {
+    await page.waitForFunction(
+      () => {
+        const img = document.querySelector('img[src*="predicted_images"]');
+        return img && img.naturalWidth > 0 && img.naturalHeight > 0;
+      },
+      {
+        timeout: 120000,
+      }
+    );
 
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Email sent: " + info.response);
-    }
-  });
+    await browser.close();
+    console.timeEnd("Login+Upload+classifyTime");
+    const end = new Date();
+    const time = end - start;
+    let date = new Date(time);
+    let mailOptions = {
+      from: "ahmadtahmid01@gmail.com",
+      to: recipients.join(","),
+      subject: "MosquitoID test-run Speed",
+      text: `Tested Website Successfully. \n\n\nIt took ${date.getUTCMinutes()} minutes, ${date.getUTCSeconds()} seconds, and ${date.getUTCMilliseconds()} milli-seconds to login ---> upload image --> classify the mosquito image. \n\nCheers,\nTeam mosquitoes\n\n`,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+  } catch (error) {
+    await browser.close();
+    let mailOptions = {
+      from: "ahmadtahmid01@gmail.com",
+      to: recipients.join(","),
+      subject: "MosquitoID test-run Speed",
+      text: `Classification is taking more than 2 minutes. Exited successfully.\n\nCheers,\nTeam mosquitoes\n\n`,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+  }
 })();
